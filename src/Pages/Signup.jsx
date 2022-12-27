@@ -1,34 +1,36 @@
-import React from 'react'
+import React from 'react';
 import { Box, TextField, Typography, Grid, Button } from "@mui/material";
 import { styled } from "@mui/material"
 import SignupBox from '../component/SignupBox';
-import { Formik } from "formik";
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { fontWeight, margin, Stack } from '@mui/system';
 import  bg from "../assets/bg.png";
+import { useForm, Controller } from "react-hook-form";
 export const Signup = () => {
-    
+
     const registerSchema = yup.object().shape({
         eliCodes: yup.string().required("required"),
         email: yup.string().email("invalid email").required("required"),
         password: yup.string().required("required"),
         confirmPassword: yup.string() .oneOf([yup.ref('password'), null], 'Passwords must match').required("required")
     });
-
-    const initialValuesRegister = {
-        eliCodes: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-         };
+    const {
+        register,
+        control,
+        handleSubmit,
+        formState: { errors }
+      } = useForm({
+        resolver: yupResolver(registerSchema)
+      });
     
-    const handleFormSubmit = async (values, onSubmitProps) => {
-           console.log(values)
-          };     
-
-    const Wrapper = styled(Box)({
+      const onSubmit = data => {
+        console.log(JSON.stringify(data, null, 2));
+      };
+    
+      const Wrapper = styled(Box)({
         position: "relative",
-        width: "1400px",
+        width: "100%",
         height: "740px",
         backgroundColor: "#808080",
         background: "rgba(255, 255, 255, 0.87)",
@@ -152,99 +154,89 @@ export const Signup = () => {
        <Signup>Sign up</Signup>
         </LogoBox>
 
-        <Formik  
-                onSubmit={handleFormSubmit}
-                initialValues={ initialValuesRegister}
-                validationSchema={registerSchema}
-               
-
-              >      
-        {({
-        values,
-        errors,
-        touched,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-        setFieldValue,
-        resetForm,
-        isValidating
-      }) => (            
-            <form onSubmit={handleSubmit}  >
+         
+        
+            <form  >
                <Gridbox container spacing={2} >
                 <Grid width="100%" height="59px"  >
                     <Fielddesign fullWidth 
                     label="Eli Codes"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.eliCodes}
+
                     name="eliCodes"
-                    
+                    {...register('eliCodes')}
+                    error={errors.eliCodes ? true : false}
                     sx={{
                         "& fieldset": { border: 'none' },
                         "& error" :{ backgroundColor:"none" }
                       }}
                     >
-                     
-                </Fielddesign>
-                {touched.eliCodes && errors.eliCodes && <div style={{color:"red",width:"200px",textAlign:"left",marginLeft:"10px",marginbottom:"4px"}}>{errors.eliCodes}</div>}  
-                       
+                   </Fielddesign>
+                 <Typography variant="inherit" color="textSecondary" style={{color:"red",width:"200px",textAlign:"left",marginLeft:"10px",marginbottom:"4px"}}>
+                {errors.eliCodes?.message}
+              </Typography>
                 </Grid>
                 <Grid width="100%" height="59px"  >
                 <Fielddesign
                  fullWidth
                 label="Email"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.email}
-                name="email"
                 
+                name="email"
+                {...register('email')}
+                error={errors.email ? true : false}
+              
+
                 sx={{
                     "& fieldset": { border: 'none' },
                   }}
                 >
                   
                 </Fielddesign>
-                {touched.email && errors.email && <div style={{color:"red",width:"200px",textAlign:"left",marginLeft:"10px",marginbottom:"4px"}}>{errors.email}</div>}
+                <Typography variant="inherit" color="textSecondary" style={{color:"red",width:"200px",textAlign:"left",marginLeft:"10px",marginbottom:"4px"}}>
+                {errors.email?.message}
+              </Typography>
                 </Grid>
                 <Grid width="100%" height="59px"  >
                 <Fielddesign
                 fullWidth
                 label="Password"
                 type="password"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.password}
-                name="password"
-                
+                 name="password"
+                {...register('password')}
+                error={errors.password ? true : false}
                 sx={{
                     "& fieldset": { border: 'none' },
                   }}
                 >
-              
                 </Fielddesign>
-                {touched.password && errors.password && <div style={{color:"red",width:"200px",textAlign:"left",marginLeft:"10px",marginbottom:"4px"}}>{errors.password}</div>}
+
+                <Typography variant="inherit" color="textSecondary" style={{color:"red",width:"200px",textAlign:"left",marginLeft:"10px",marginbottom:"4px"}}>
+                {errors.password?.message}
+              </Typography>
                 </Grid>
                 <Grid width="100%" height="59px" >
                 <Fielddesign
                 fullWidth
                 type="password"
                 label="Confirm Password"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.confirmPassword}
-                name="confirmPassword"
                 
+                name="confirmPassword"
+               
+                {...register('confirmPassword')}
+                error={errors.confirmPassword ? true : false}
+              
+
                 sx={{
                     "& fieldset": { border: 'none' },
                   }}
                 ></Fielddesign>
-                {touched.confirmPassword && errors.confirmPassword && <div style={{color:"red",width:"200px",textAlign:"left",marginLeft:"10px",marginbottom:"4px"}}>{errors.confirmPassword}</div>}
+                <Typography variant="inherit" color="textSecondary" style={{color:"red",width:"200px",textAlign:"left",marginLeft:"10px",marginbottom:"4px"}}>
+                {errors.confirmPassword?.message}
+              </Typography>
                 </Grid>
                 
                </Gridbox>
                
-                <SignButton  type="submit">Sign up</SignButton>
+                <SignButton  type="submit" onClick={handleSubmit(onSubmit)}>Sign up</SignButton>
                 <Box width="230px"  marginTop="15px" height="40px" marginLeft="80px" >
                 <Signtypography >By signing up, I agree to the Privacy Policy and Terms of Service</Signtypography>
                 </Box>
@@ -255,8 +247,6 @@ export const Signup = () => {
                 
                 
             </form>
-        )}
-        </Formik>
        
       </SignupBox>
 
